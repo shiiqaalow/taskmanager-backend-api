@@ -28,7 +28,7 @@ app.use(cors(
 app.use(limiter)
 
 
-if(process.env.NODE_ENV === 'development'? process.env.MONGO_URL_DEV : process.env.MONGO_URL_PRO){
+if(process.env.NODE_ENV == 'development'? process.env.MONGO_URL_DEV : process.env.MONGODB_URL_PRO){
     app.use(morgan('dev'))
 }
 
