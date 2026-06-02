@@ -10,9 +10,10 @@ import { errorHandler } from './middlewares/errorHandler.js'
 import { auth_routes } from './routes/authRoutes.js'
 import { admin_dash, user_dash } from './routes/dashboard.js'
 import { task_routes } from './routes/taskRoutes.js'
-import  swaggerUi  from 'swagger-ui-express'
+import swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './utils/swagger.js'
 import { limiter } from './middlewares/rateLimiter.js'
+
 const app = express()
 const port = process.env.PORT || 5000
 
@@ -20,43 +21,52 @@ const port = process.env.PORT || 5000
 app.use(helmet())
 
 app.use(express.json())
-app.use(cors(
-    {
-        origin: [ 'http://localhost:5879' ]
-    }
-))
+
+app.use(cors({
+    origin: ['http://localhost:5879']
+}))
+
 app.use(limiter)
 
 
-if(process.env.NODE_ENV == 'development'? process.env.MONGO_URL_DEV : process.env.MONGODB_URL_PRO){
+// ✅ FIX 1: correct morgan condition
+if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
 }
 
 
 // routes
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-// swagger api
-app.use('/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+app.use('/auth', auth_routes)
+app.use('/dash', admin_dash)
+app.use('/dash', user_dash)
+app.use('/task', task_routes)
 
-
-// auth_routes
-app.use('/auth',auth_routes )
-app.use('/dash',admin_dash )
-app.use('/dash',user_dash )
-
-// task_routes
-app.use('/task',task_routes)
-
-
-// error message Handler
 app.use(errorHandler)
 
 
-mongoose.connect(process.env.MONGODB_URL_DEV)
-    .then(()=>{
+// ✅ FIX 2: correct MongoDB connection logic
+const mongoUri =
+    process.env.NODE_ENV === 'production'
+        ? process.env.MONGODB_URL_PRO
+        : process.env.MONGODB_URL_DEV
+
+
+if (!mongoUri) {
+    console.log('❌ MongoDB URI is missing')
+    process.exit(1)
+}
+
+mongoose.connect(mongoUri)
+    .then(() => {
         console.log('MongoDB connected successfully')
-        app.listen(port,()=>{
-            console.log(`https://localhost ${port} server is running. `)
+
+        app.listen(port, () => {
+            console.log(`https://localhost ${port} server is running.`)
         })
     })
-    .catch((error)=> console.log('Failed to connect mongoDB',error))
+    .catch((error) => {
+        console.log('Failed to connect mongoDB', error)
+        process.exit(1)
+    })
