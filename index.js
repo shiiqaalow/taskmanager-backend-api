@@ -14,7 +14,7 @@ import  swaggerUi  from 'swagger-ui-express'
 import { swaggerSpec } from './utils/swagger.js'
 import { limiter } from './middlewares/rateLimiter.js'
 const app = express()
-const port = process.env.PORT
+const port = process.env.PORT || 5000
 
 // security protection
 app.use(helmet())
@@ -52,7 +52,7 @@ app.use('/task',task_routes)
 app.use(errorHandler)
 
 
-mongoose.connect(process.env.MONGODB_URL)
+mongoose.connect(process.env.MONGODB_URL_DEV)
     .then(()=>{
         console.log('MongoDB connected successfully')
         app.listen(port,()=>{
