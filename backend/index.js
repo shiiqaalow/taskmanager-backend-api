@@ -13,6 +13,7 @@ import { task_routes } from './routes/taskRoutes.js'
 import  swaggerUi  from 'swagger-ui-express'
 import { swaggerSpec } from './utils/swagger.js'
 import { limiter } from './middlewares/rateLimiter.js'
+import { user_routes } from './routes/user.js'
 const app = express()
 const port = process.env.PORT || 5000
 const mongoURI = 
@@ -58,6 +59,7 @@ app.use('/api/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 app.use('/api/auth',auth_routes )
 app.use('/api/dash',admin_dash )
 app.use('/api/dash',user_dash )
+app.use('/api/users',user_routes)
 
 // task_routes
 app.use('/api/task',task_routes)

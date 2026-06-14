@@ -8,4 +8,4 @@ import { authorize } from '../middlewares/authorize.js'
 export const auth_routes = express.Router()
 
 auth_routes.post('/signup',validate(createUserSchema),register)
-auth_routes.post('/signin',validate(loginSchema),authProtect,login)
+auth_routes.post('/signin',validate(loginSchema),login)
