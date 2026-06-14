@@ -12,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : 'https://finance-tracker-api-if0z.onrender.com/'
+        url: process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : 'https://taskmanager-backend-api-vvcy.onrender.com/'
       }
     ],
     components: {
