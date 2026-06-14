@@ -1,4 +1,6 @@
 import swaggerJSDoc from 'swagger-jsdoc';
+import dotenv from 'dotenv'
+dotenv.config()
 
 const options = {
   definition: {
@@ -10,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000'
+        url: process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : 'https://finance-tracker-api-if0z.onrender.com/'
       }
     ],
     components: {

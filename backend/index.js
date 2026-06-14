@@ -15,6 +15,10 @@ import { swaggerSpec } from './utils/swagger.js'
 import { limiter } from './middlewares/rateLimiter.js'
 const app = express()
 const port = process.env.PORT || 5000
+const mongoURI = 
+    process.env.NODE_ENV === 'development'
+        ? process.env.MONGO_URI_DEV
+        : process.env.MONGO_URI_PRO
 
 // security protection
 app.use(helmet())
@@ -22,41 +26,56 @@ app.use(helmet())
 app.use(express.json())
 app.use(cors(
     {
-        origin: [ 'http://localhost:5879' ]
+        origin: [ 
+        `http://localhost:${port}`,
+            'http://localhost:5879' ,
+            'http://localhost:5173',
+            'http://localhost:5174',
+            'http://localhost:5175',
+        ]
     }
 ))
 app.use(limiter)
 
 
-if(process.env.NODE_ENV == 'development'? process.env.MONGO_URI_PRO : process.env.MONGO_URI_DEV){
+if(process.env.NODE_ENV === 'development'? process.env.MONGO_URI_DEV : process.env.MONGO_URI_PRO){
     app.use(morgan('dev'))
 }
 
 
 // routes
 
+// routes
+app.get('/',(req,res)=>{
+    res.status(200).send('Server is working 👍')
+})
+
 // swagger api
-app.use('/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+app.use('/api/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 
 
 // auth_routes
-app.use('/auth',auth_routes )
-app.use('/dash',admin_dash )
-app.use('/dash',user_dash )
+app.use('/api/auth',auth_routes )
+app.use('/api/dash',admin_dash )
+app.use('/api/dash',user_dash )
 
 // task_routes
-app.use('/task',task_routes)
+app.use('/api/task',task_routes)
 
 
 // error message Handler
 app.use(errorHandler)
 
 
-mongoose.connect(process.env.MONGO_URI_DEV)
+mongoose.connect(mongoURI)
     .then(()=>{
         console.log('MongoDB connected successfully')
         app.listen(port,()=>{
-            console.log(`https://localhost ${port} server is running. `)
+            console.log(`server is running on port http://localhost:${port} `)
         })
     })
-    .catch((error)=> console.log('Failed to connect mongoDB',error))
+    .catch((error)=> {
+        console.log('Failed to connect mongoDB',error)
+        process.exit(1)
+    })
+    
