@@ -19,7 +19,7 @@ export const task_routes = express.Router()
  *           description: a list of tasks
  */
 
-task_routes.get('/',authProtect,getTasks)
+task_routes.get('/',getTasks)
 
 /**
  * @swagger
@@ -57,7 +57,7 @@ task_routes.get('/',authProtect,getTasks)
  *                
  */
 
-task_routes.post('/create',authProtect,validate(createTaskSchema),createTask)
+task_routes.post('/create',validate(createTaskSchema),createTask)
 
 /**
  * @swagger

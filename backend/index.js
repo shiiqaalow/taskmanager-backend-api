@@ -28,11 +28,8 @@ app.use(express.json())
 app.use(cors(
     {
         origin: [ 
-        `http://localhost:${port}`,
             'http://localhost:5879' ,
             'http://localhost:5173',
-            'http://localhost:5174',
-            'http://localhost:5175',
         ]
     }
 ))

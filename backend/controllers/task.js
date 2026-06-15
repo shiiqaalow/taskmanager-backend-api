@@ -3,7 +3,7 @@ import { Task } from "../models/task.js";
 export const createTask = async (req, res, next) => {
   try {
     // find what the user and what hes has posted/typed
-    const task = await Task.create({ ...req.body, createdBy: req.user._id });
+    const task = await Task.create({ ...req.body, createdBy: '6a1b760abd44bf3fc6bb3f0c' });
     if (!task)
       return res
         .sttus(401)
@@ -21,12 +21,12 @@ export const getTasks = async (req, res, next) => {
     let tasks = null;
 
     // show all tasks to the admin
-    if (req.user.role === "admin") {
+    // if (req.user.role === "admin") {
       tasks = await Task.find().populate("createdBy", "name email role");
-    } else {
+    // } else {
       // show the user its own task
-      tasks = await Task.find({ createdBy: req.user._id });
-    }
+      // tasks = await Task.find({ createdBy: req.user._id });
+    // }
 
     if (tasks.length === 0) {
       return res.status(404).json({
