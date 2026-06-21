@@ -1,19 +1,37 @@
 import { useQuery } from "@tanstack/react-query"
-import { Task } from "./Task"
+import { Navigate, Route, Routes } from "react-router"
+import { RegisterPage } from "./pages/auth/RegisterPage"
+import { LoginPage } from "./pages/auth/LoginPage"
+import { DashboardPage } from "./pages/dashboard/DashboardPage"
+import { ProtectedRoutes } from "./components/auth/ProtectedRoutes"
+import { AdminDashboard } from "./pages/dashboard/AdminDashboard"
+import { AdminProtectedRoutes } from "./components/auth/AdminProtectedRoutes"
 
 function App() {
-  const { data,error,isLoading } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: () => fetch('http://localhost:5000/api/task').then(res => res.json())
-  })
-  if(isLoading) return <h1>Loading...</h1>
-  if(error) return <h1>Error...</h1>
+  
   return (
-    <div>
-      <Task/>
-      {data.map(task=>(
-        <h1 key={task._id}>{task._id} <span>{task.title} <span>{task.status}</span> </span>  </h1>
-      )) }
+    <div className="bg-background text-foreground">
+      {/* <Siginup/> */}
+      <Routes>
+        <Route path = '/' element = {< Navigate to = '/register' replace /> }/>
+        <Route path = '/register' element = {< RegisterPage/> } />
+        <Route path = '/login' element = {< LoginPage/> } />
+        <Route path = '/dashboard' element = 
+          {
+            <ProtectedRoutes>
+              < DashboardPage/> 
+            </ProtectedRoutes>
+          } 
+        />
+        <Route path = '/admin' element = 
+          {
+            <AdminProtectedRoutes>
+              < AdminDashboard/> 
+            </AdminProtectedRoutes>
+          } 
+        />
+
+      </Routes>
     </div>
   )
 }

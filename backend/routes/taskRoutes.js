@@ -3,6 +3,7 @@ import { authProtect } from '../middlewares/authProtect.js'
 import { validate } from '../middlewares/validate.js'
 import { createTaskSchema } from '../schemas/taskSchema.js'
 import { createTask, deleteTask, getTasks, updateTask } from '../controllers/task.js'
+import { authorize } from '../middlewares/authorize.js'
 
 export const task_routes = express.Router()
 
@@ -19,7 +20,7 @@ export const task_routes = express.Router()
  *           description: a list of tasks
  */
 
-task_routes.get('/',getTasks)
+task_routes.get('/',authProtect,authorize('admin','user'),getTasks)
 
 /**
  * @swagger
@@ -57,7 +58,7 @@ task_routes.get('/',getTasks)
  *                
  */
 
-task_routes.post('/create',validate(createTaskSchema),createTask)
+task_routes.post('/create',authProtect,validate(createTaskSchema),createTask)
 
 /**
  * @swagger

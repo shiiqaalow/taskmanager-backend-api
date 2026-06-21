@@ -18,7 +18,7 @@ export const getUser = async (req,res,next) => {
     try {
         // check if the user is registered or not
         const user_id = req.params.id
-        const user = await User.findById(user_id)
+        const user = await User.findById(user_id).select('-password')
         if(!user){
             return res.status(404).json({ message: 'NO user found.' })
         }
@@ -63,12 +63,12 @@ export const deleteUser = async (req,res,next) => {
 }
 
 // get current online user 
-export const getCurrentUser = async (req, res, next) => {
-  try {
-    res.status(200).json({
-      user: req.user,
-    });
-  } catch (error) {
-    next(error);
-  }
+export const getCurrentUser = async (req, res, next) => {      
+    const user = req.user
+    try {
+           await new Promise((resolve) => setTimeout(resolve, 5000))
+        return res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
 };
