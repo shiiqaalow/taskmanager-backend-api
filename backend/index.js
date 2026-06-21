@@ -1,4 +1,7 @@
 import express from 'express'
+// socket.io imports
+import { createServer } from 'http'        // ✅ add this
+import { Server } from 'socket.io'         // ✅ add this
 import mongoose from 'mongoose'
 import helmet from 'helmet'
 import cors from 'cors'
@@ -15,6 +18,25 @@ import { swaggerSpec } from './utils/swagger.js'
 import { limiter } from './middlewares/rateLimiter.js'
 import { user_routes } from './routes/user.js'
 const app = express()
+// create socket http server and wrap the express app
+
+const httpServer = createServer(app)       // ✅ wrap app in httpServer
+
+// ✅ attach Socket.io to httpServer
+export const io = new Server(httpServer, {
+  cors: {
+    origin: [
+      'http://localhost:5879',
+      'http://localhost:5173',
+    ]
+  }
+})
+
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id)
+  socket.on('disconnect', () => console.log('Client disconnected:', socket.id))
+})
+
 const port = process.env.PORT || 5000
 const mongoURI = 
     process.env.NODE_ENV === 'development'
@@ -69,8 +91,8 @@ app.use(errorHandler)
 mongoose.connect(mongoURI)
     .then(()=>{
         console.log('MongoDB connected successfully')
-        app.listen(port,()=>{
-            console.log(`server is running on port http://localhost:${port} `)
+        httpServer.listen(port, () => {        // ✅ httpServer.listen, not app.listen
+            console.log(`Server running on http://localhost:${port}`)
         })
     })
     .catch((error)=> {
