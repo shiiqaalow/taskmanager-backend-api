@@ -16,9 +16,9 @@ export const getTasks = async (req, res, next) => {
     let tasks
 
     if (req.user.role === 'admin') {
-      tasks = await Task.find().populate('createdBy', 'name email role')
+      tasks = await Task.find().populate('createdBy', 'name email role').sort({ createdAt: -1 })
     } else {
-      tasks = await Task.find({ createdBy: req.user._id })
+      tasks = await Task.find({ createdBy: req.user._id }).sort({ createdAt: -1 })
     }
 
     res.status(200).json(tasks)  // ✅ always 200, empty array is valid

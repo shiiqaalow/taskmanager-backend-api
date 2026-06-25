@@ -125,7 +125,7 @@ export const DashboardPage = () => {
   return (
     <div className='min-h-screen bg-background'>
       <DashboardHeader />
-      <main>
+      <main className='max-w-7xl mx-auto px-4 py-8 space-y-6'>
         <DashboardWelcome
           showCreateForm={showCreateForm}
           onCreateTask={handleCreateTaskClick}
